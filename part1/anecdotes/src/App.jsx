@@ -19,10 +19,13 @@ const App = () => {
   const [votes, setVote] = useState(Array(anecdotes.length).fill(0))
   const [mostVoted, setMostVoted] = useState(0)
 
-  const handleSelected = () => {
-    const randomAnecdote = Math.floor(Math.random() * anecdotes.length)
-    console.log(anecdotes[randomAnecdote])
-    return setSelected(randomAnecdote)
+
+  const pickRandom = () => {
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const randomAnecdote = Math.floor(Math.random() * anecdotes.length)
+      if (randomAnecdote !== selected) return randomAnecdote
+    }
   }
 
   const handleVote = () => {
@@ -41,7 +44,7 @@ const App = () => {
       <Header text={"Anecdote of the day"} />
       <Text text={anecdotes[selected]} />
       <Text text={`has ${votes[selected]} votes.`} />
-      <Button handleClick={handleSelected} text={"Next anecdote"} />
+      <Button handleClick={() => setSelected(pickRandom())} text={"Next anecdote"} />
       <Button handleClick={handleVote} text={"Vote"} />
       <Header text={"Anecdote with the most votes"} />
       <Text text={anecdotes[mostVoted]} />
