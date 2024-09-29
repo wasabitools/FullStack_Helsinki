@@ -1,14 +1,11 @@
 import './App.css'
-import { Header } from './components/Header'
-import { Total } from './components/Total'
-import { Content } from './components/Content'
+import { Course } from './components/Course'
 
-const App = ({course, parts}) => {
+const App = ({ courses }) => {
   return (
     <div>
-      <Header course={course} />
-      <Content key= {parts.id} parts={parts} />
-      <Total  parts={parts}/>
+      <h1>Web development curriculum</h1>
+      <Course courses={courses} />
     </div>
   )
 }
