@@ -1,23 +1,19 @@
 import { Button } from "./Button"
 
-const Filter = ({ persons, newName }) => {
-    const personExists = persons.includes(newName)
-
-    const handlePersonFilter = (event) => {
-        event.preventDefault()
-        if (personExists) {
-            return newPerson
-        }
-    }
+// eslint-disable-next-line react/prop-types
+const Filter = ({ filterValue, handleFilterChange }) => {
 
     return (
-        <form onSubmit={handlePersonFilter}>
+        <form >
             <div>
                 filter: <input
+                    value={filterValue}
+                    onChange={handleFilterChange}
                     placeholder='search contacts' />
             </div>
             <Button title="search" />
-        </form>)
+        </form>
+    )
 }
 
 export { Filter }

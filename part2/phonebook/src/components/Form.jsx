@@ -2,13 +2,21 @@ import { useState } from 'react'
 import { Button } from './Button'
 
 
+// eslint-disable-next-line react/prop-types
 const Form = ({ addNewPerson, persons }) => {
     const [newName, setNewName] = useState("")
     const [newNumber, setNewNumber] = useState("")
 
-    const handlePersonChange = (event) => {
-        const personExists = persons.some(persons.name === newName)
+    const resetForm = () => {
+        setNewName("")
+        setNewNumber("")
+    }
 
+    const handlePersonChange = (event) => {
+        event.preventDefault()
+        const personExists = persons.some(person => person.name === newName)
+
+        
         if (!newName || !newNumber) {
             alert("Name and number cannot be empty.");
             return
@@ -16,13 +24,11 @@ const Form = ({ addNewPerson, persons }) => {
 
         if (personExists) {
             alert(`${newName} is already added to the phonebook.`);
+            resetForm()
             return
         }
-
-        event.preventDefault()
         addNewPerson({ newName, newNumber })
-        setNewName("")
-        setNewNumber("")
+        resetForm()
 
     }
     return (
