@@ -3,7 +3,7 @@ import { Button } from './Button'
 
 
 // eslint-disable-next-line react/prop-types
-const Form = ({ addNewPerson, persons }) => {
+const Form = ({ addNewPerson, editPersonNumber, persons }) => {
     const [newName, setNewName] = useState("")
     const [newNumber, setNewNumber] = useState("")
 
@@ -14,16 +14,20 @@ const Form = ({ addNewPerson, persons }) => {
 
     const handlePersonChange = (event) => {
         event.preventDefault()
-        const personExists = persons.some(person => person.name === newName)
+        const existingPerson = persons.find(person => person.name === newName)
 
-        
         if (!newName || !newNumber) {
-            alert("Name and number cannot be empty.");
+            alert("Name and number cannot be empty.")
             return
         }
 
-        if (personExists) {
-            alert(`${newName} is already added to the phonebook.`);
+        if (existingPerson) {
+            const confirmBox = window.confirm(
+                `Do you really want to replace ${existingPerson.name}'s number?`
+            )
+            if (confirmBox) {
+                editPersonNumber(existingPerson.id, newNumber)
+            }
             resetForm()
             return
         }
@@ -39,7 +43,6 @@ const Form = ({ addNewPerson, persons }) => {
                     placeholder='Add new name' />
             </div>
             <div>
-
                 number: <input value={newNumber}
                     onChange={(event => setNewNumber(event.target.value))}
                     placeholder='Add new number' />

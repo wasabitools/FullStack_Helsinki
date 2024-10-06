@@ -1,5 +1,5 @@
+import phonebookService from './services/phonebook'
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import { Section } from './components/Section'
 import { Form } from './components/Form'
 import { ContactList } from './components/ContactList'
@@ -11,11 +11,11 @@ function App() {
 
   const hook = () => {
     console.log('persons effect')
-    axios
-      .get("http://localhost:3001/persons")
-      .then(response => {
+    phonebookService
+      .getAll()
+      .then(contacts => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(contacts)
       })
   }
 
@@ -25,10 +25,41 @@ function App() {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: (persons.length + 1)
+      id: String(persons.length + 1)
     }
 
-    setPersons(oldPersons => [...oldPersons, newPerson])
+    phonebookService
+      .create(newPerson)
+      .then(returnedPerson => {
+        setPersons(oldPersons => [...oldPersons, returnedPerson])
+      })
+      .catch(error => {
+        console.error('Error adding person', error)
+      })
+  }
+
+  const editPersonNumber = (id, newNumber) => {
+    const existingPerson = persons.find(person => person.id === id)
+    const updatedPerson = { ...existingPerson, number: newNumber }
+
+    phonebookService
+      .update(id, updatedPerson)
+      .then(returnedPerson => {
+        setPersons(oldPersons =>
+          oldPersons.map(person => person.id === id ? returnedPerson : person
+          ))
+      })
+  }
+
+  const deletePerson = (id) => {
+    phonebookService
+      .deleted(id)
+      .then(() => {
+        setPersons(oldPersons => oldPersons.filter(person => person.id !== id))
+      })
+      .catch((error) => {
+        console.error(`Failed to delete the person ${id}`, error)
+      })
   }
 
   const handleFilterChange = (event) => {
@@ -46,9 +77,9 @@ function App() {
       <Section title="Phonebook" />
       <Filter persons={filter} handleFilterChange={handleFilterChange} />
       <Section title="Add new contact" />
-      <Form addNewPerson={addNewPerson} persons={persons} />
+      <Form addNewPerson={addNewPerson} persons={persons} editPersonNumber={editPersonNumber} />
       <Section title="Numbers" />
-      <ContactList contacts={personsToShow} />
+      <ContactList contacts={personsToShow} deletion={deletePerson} />
     </>
   )
 }
