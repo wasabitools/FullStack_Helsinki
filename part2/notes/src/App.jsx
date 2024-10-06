@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
 import axios from 'axios'
+import notesService from './services/notes'
+import { useState, useEffect } from 'react'
 import { Note } from './components/Note'
 import { Form } from './components/Form'
 import { Button } from './components/Button'
@@ -9,12 +10,10 @@ const App = () => {
   const [showAll, setShowAll] = useState(true)
 
   const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
+    notesService
+      .getAll()
+      .then(initialNotes => {
+        setNotes(initialNotes)
       })
   }
 
@@ -27,11 +26,37 @@ const App = () => {
       important: Math.random() > 0.5,
       id: String(notes.length + 1)
     }
-    setNotes(oldNotes => [...oldNotes, noteObject])
+
+    notesService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(oldNotes => [...oldNotes, returnedNote])
+      })
+  }
+
+  const deleteNote = id => {
+    notesService
+      .deleted(id)
+      .then(() => {
+        setNotes(oldNotes => oldNotes.filter(note => note.id !== id))
+      })
+      .catch(error => {
+        console.error(`Failed to delete the note ${id}`, error)
+      })
   }
 
   const notesToShow = showAll ? notes : notes.filter(note => note.important === true)
 
+  const toggleImportanceOf = (id) => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    notesService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(n => n.id !== id ? n : returnedNote))
+      })
+  }
   return (
     <>
       <div>
@@ -42,7 +67,11 @@ const App = () => {
         <ul>
           {/* Anti-pattern: array indexes as keys */}
           {notesToShow.map(note =>
-            <Note key={note.id} note={note} />
+            <Note
+              key={note.id}
+              note={note}
+              toggleImportance={() => toggleImportanceOf(note.id)}
+              deletion={() => deleteNote(note.id)} />
           )}
         </ul>
         <Form addNote={addNote} />
