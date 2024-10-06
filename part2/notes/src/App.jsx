@@ -4,9 +4,8 @@ import { Note } from './components/Note'
 import { Form } from './components/Form'
 import { Button } from './components/Button'
 
-const App = (props) => {
+const App = () => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
 
   const hook = () => {
@@ -14,7 +13,7 @@ const App = (props) => {
     axios
       .get('http://localhost:3001/notes')
       .then(response => {
-        console.log('promise fullfiled')
+        console.log('promise fulfilled')
         setNotes(response.data)
       })
   }
