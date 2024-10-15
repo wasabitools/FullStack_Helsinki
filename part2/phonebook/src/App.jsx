@@ -1,13 +1,19 @@
+import './index.css'
 import phonebookService from './services/phonebook'
-import { useState, useEffect } from 'react'
-import { Section } from './components/Section'
-import { Form } from './components/Form'
 import { ContactList } from './components/ContactList'
 import { Filter } from './components/Filter'
+import { Form } from './components/Form'
+import { Footer } from './components/Footer'
+import { Notification } from './components/Notification'
+import { Section } from './components/Section'
+import { useState, useEffect } from 'react'
+
+
 
 function App() {
   const [persons, setPersons] = useState([])
   const [filter, setFilter] = useState("")
+  const [notification, setNotification] = useState({ message: null, type: "" })
 
   const hook = () => {
     console.log('persons effect')
@@ -21,45 +27,57 @@ function App() {
 
   useEffect(hook, [])
 
-  const addNewPerson = ({ newName, newNumber }) => {
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => {
+      setNotification({ message: null, type: "" });
+    }, 2000);
+  }
+
+  const addNewPerson = async ({ newName, newNumber }) => {
     const newPerson = {
       name: newName,
       number: newNumber,
       id: String(persons.length + 1)
     }
 
-    phonebookService
-      .create(newPerson)
-      .then(returnedPerson => {
-        setPersons(oldPersons => [...oldPersons, returnedPerson])
-      })
-      .catch(error => {
-        console.error('Error adding person', error)
-      })
+    try {
+      const returnedPerson = await phonebookService.create(newPerson)
+      setPersons(oldPersons => [...oldPersons, returnedPerson])
+      showNotification(`${newPerson.name} was added!`, "success")
+    } catch (error) {
+      showNotification(`Failed to add ${newPerson.name}.`, "error");
+    }
   }
 
-  const editPersonNumber = (id, newNumber) => {
+  const editPersonNumber = async (id, newNumber) => {
     const existingPerson = persons.find(person => person.id === id)
     const updatedPerson = { ...existingPerson, number: newNumber }
 
-    phonebookService
-      .update(id, updatedPerson)
-      .then(returnedPerson => {
-        setPersons(oldPersons =>
-          oldPersons.map(person => person.id === id ? returnedPerson : person
-          ))
-      })
+    try {
+      const returnedPerson = await phonebookService.update(id, updatedPerson)
+      setPersons(oldPersons =>
+        oldPersons.map(person => person.id === id ? returnedPerson : person
+        ))
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        showNotification(`${existingPerson.name} has been removed from the server.`, "error")
+      } else {
+        showNotification(`Failed to update ${existingPerson.name}.`, "error")
+      }
+    }
   }
 
-  const deletePerson = (id) => {
-    phonebookService
-      .deleted(id)
-      .then(() => {
-        setPersons(oldPersons => oldPersons.filter(person => person.id !== id))
-      })
-      .catch((error) => {
-        console.error(`Failed to delete the person ${id}`, error)
-      })
+  const deletePerson = async (id) => {
+    const deletedPerson = persons.find(person => person.id === id)
+    try {
+      await phonebookService.deleted(id)
+      const updatedPersons = await phonebookService.getAll()
+      setPersons(updatedPersons)
+    } catch (error) {
+      showNotification(`${deletedPerson.name} has been deleted already.`, "error")
+
+    }
   }
 
   const handleFilterChange = (event) => {
@@ -75,11 +93,13 @@ function App() {
   return (
     <>
       <Section title="Phonebook" />
+      <Notification message={notification.message} type={notification.type} />
       <Filter persons={filter} handleFilterChange={handleFilterChange} />
       <Section title="Add new contact" />
       <Form addNewPerson={addNewPerson} persons={persons} editPersonNumber={editPersonNumber} />
       <Section title="Numbers" />
       <ContactList contacts={personsToShow} deletion={deletePerson} />
+      <Footer />
     </>
   )
 }
