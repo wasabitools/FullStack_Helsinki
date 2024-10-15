@@ -1,12 +1,16 @@
+import './index.css'
 import notesService from './services/notes'
 import { useState, useEffect } from 'react'
 import { Note } from './components/Note'
 import { Form } from './components/Form'
 import { Button } from './components/Button'
+import { Notification } from './components/Notification'
+import { Footer } from './components/Footer'
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
+  const [error, setError] = useState("Arrrh naaarh! Errarrhrrhh!")
 
   const hook = () => {
     notesService
@@ -55,13 +59,21 @@ const App = () => {
       .then(returnedNote => {
         setNotes(notes.map(n => n.id !== id ? n : returnedNote))
       })
+      .catch(error => {
+        setError(
+          `Note '${note.content}' was already removed from server.`
+        )
+        setTimeout(() => {
+          setError(null)
+        }, 5000)
+        setNotes(notes.filter(n => n.id !== id))
+      })
   }
   return (
     <>
       <div>
-        <h1>
-          Notes
-        </h1>
+        <h1>Notes</h1>
+        <Notification message={error} />
         <Button showAll={showAll} setShowAll={setShowAll} />
         <ul>
           {/* Anti-pattern: array indexes as keys */}
@@ -74,6 +86,7 @@ const App = () => {
           )}
         </ul>
         <Form addNote={addNote} />
+        <Footer />
       </div>
     </>
   )

@@ -14,6 +14,7 @@ const Form = ({ addNewPerson, editPersonNumber, persons }) => {
 
     const handlePersonChange = (event) => {
         event.preventDefault()
+        // eslint-disable-next-line react/prop-types
         const existingPerson = persons.find(person => person.name === newName)
 
         if (!newName || !newNumber) {
