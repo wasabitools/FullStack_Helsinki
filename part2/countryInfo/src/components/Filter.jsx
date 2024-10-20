@@ -1,14 +1,26 @@
+import { useState } from "react"
 
-const Filter = ({ filterValue, handleFilterChange }) => {
+export const Filter = ({ setCountry }) => {
+    const [input, setInput] = useState("")
+
+    const onSearch = (event) => {
+        event.preventDefault()
+        setCountry(input)
+    }
+
+    const handleChange = (event) => {
+        const inputCountry = event.target.value
+        setInput(inputCountry)
+    }
+
     return (
-        <forn>
+        <form onSubmit={onSearch}>
             <input
-                value={filterValue}
-                onChange={handleFilterChange}
+                type="text"
+                value={input}
+                onChange={handleChange}
                 placeholder="search for a country">
             </input>
-        </forn>
+        </form>
     )
 }
-
-export { Filter }
