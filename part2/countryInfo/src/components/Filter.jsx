@@ -1,24 +1,25 @@
 import { useState } from "react"
 
-export const Filter = ({ setCountry }) => {
+export const Filter = ({ countries, setSearchedCountries }) => {
     const [input, setInput] = useState("")
 
-    const onSearch = (event) => {
-        event.preventDefault()
-        setCountry(input)
-    }
-
-    const handleChange = (event) => {
+    const handleSearchChange = (event) => {
         const inputCountry = event.target.value
         setInput(inputCountry)
+
+        const filtered = countries.filter(country =>
+            country.name.common.toLowerCase().includes(inputCountry.toLowerCase())
+        )
+
+        setSearchedCountries(filtered)
     }
 
     return (
-        <form onSubmit={onSearch}>
+        <form>
             <input
                 type="text"
                 value={input}
-                onChange={handleChange}
+                onChange={handleSearchChange}
                 placeholder="search for a country">
             </input>
         </form>

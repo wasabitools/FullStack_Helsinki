@@ -1,8 +1,8 @@
-const Button = ({ title }) => {
+const Button = ({ title, handleClick }) => {
     return (
         <div>
-            <button type="submit">{title}</button>
-        </div>
+            <button onClick={handleClick} type="submit">{title}</button>
+        </div >
     )
 }
 

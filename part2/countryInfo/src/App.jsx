@@ -1,30 +1,35 @@
 import { useEffect, useState } from 'react'
 import { Filter } from './components/Filter'
 import { Section } from './components/Section'
-import './App.css'
+import { Country } from './components/Country'
+import { Info } from './components/Info'
 import countryInfo from './service/countryInfo'
+import './App.css'
 
 function App() {
-  const [country, setCountry] = useState(null)
-  const [countryData, setCountryData] = useState(null)
+  const [countries, setCountries] = useState([])
+  const [searchedCountries, setSearchedCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
-    console.log("hooking a country", country)
     countryInfo
-      .getCountry(country)
+      .getAll()
       .then(response => {
-        setCountryData(response.name.common)
+        setCountries(response)
       })
       .catch(error => {
-        console.log("Error fetching country", error)
-      }), [country]
-  })
+        console.log("Error fetching countries", error)
+      })
+  }, [])
 
   return (
     <>
       <Section title="Country Info" />
-      <Filter setCountry={setCountry} />
-      {countryData && <p>Country Name: {countryData}</p>}
+      <Filter countries={countries} setSearchedCountries={setSearchedCountries} />
+      {!selectedCountry ? (
+        <Country countries={searchedCountries} onSearchedCountries={setSelectedCountry} />) : (
+        <Info country={selectedCountry} />
+      )}
     </>
   )
 }
