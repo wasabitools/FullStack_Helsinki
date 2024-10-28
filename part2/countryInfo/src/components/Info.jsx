@@ -11,6 +11,6 @@ export const Info = ({ country }) => {
         <h5>Area: {country.area}</h5>
         <ul>Languages: {Object.entries(country.languages).map(([k, v]) => (<li key={k}>{v}</li>))}</ul >
         <ul>Timezone: {country.timezones.map((timezone, index) => <li key={index}>{timezone}</li>)}</ul >
-        <Weather capital={country.capital[0]} lat={country.latlng[0]} lon={country.latlng[1]} />
+        <Weather capital={country.capital[0]} />
     </>
 }

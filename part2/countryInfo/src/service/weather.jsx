@@ -1,14 +1,14 @@
 import axios from 'axios'
 
-const baseUrl = "https://api.openweathermap.org/data/3.0/onecall"
+const baseUrl = "https://api.openweathermap.org/data/2.5/weather?q=London"
 
 
 const fetchWeather = async () => {
     try {
         const request = await axios.get(`${baseUrl}`, {
             params: {
-                lat: lat,
-                lon: lon,
+                q: capital,
+                units:"metric",
                 appid: "KEY"
             }
         })
