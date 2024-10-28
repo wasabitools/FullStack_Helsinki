@@ -4,7 +4,7 @@ import { Section } from './components/Section'
 import { Country } from './components/Country'
 import { Info } from './components/Info'
 import countryInfo from './service/countryInfo'
-import './App.css'
+// import './App.css'
 
 function App() {
   const [countries, setCountries] = useState([])
@@ -16,9 +16,6 @@ function App() {
       .getAll()
       .then(response => {
         setCountries(response)
-      })
-      .catch(error => {
-        console.log("Error fetching countries", error)
       })
   }, [])
 
