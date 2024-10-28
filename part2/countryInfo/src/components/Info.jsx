@@ -7,6 +7,7 @@ export const Info = ({ country }) => {
         <h5>Population: {country.population}</h5>
         <h5>Region: {country.region}</h5>
         <h5>Area: {country.area}</h5>
+        <ul>Languages: {Object.entries(country.languages).map(([k, v]) => (<li key={k}>{v}</li>))}</ul >
         <ul>Timezone: {country.timezones.map(timezone => <li key={timezone.indexOf()}>{timezone}</li>)}</ul >
     </>
 }

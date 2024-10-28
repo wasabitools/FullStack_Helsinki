@@ -11,7 +11,11 @@ export const Filter = ({ countries, setSearchedCountries }) => {
             country.name.common.toLowerCase().includes(inputCountry.toLowerCase())
         )
 
-        setSearchedCountries(filtered)
+        if (filtered.length > 6) {
+            setSearchedCountries([{ name: { common: "Too many results, refine your search" } }]);
+        } else {
+            setSearchedCountries(filtered.slice(0, 6));
+        }
     }
 
     return (
