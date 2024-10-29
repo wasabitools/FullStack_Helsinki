@@ -22,7 +22,7 @@ export const Weather = ({ capital }) => {
             <h6>{weather[0].description}</h6>
             <img src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} alt="Weather Icon" />
             <p>Temperature: {current.main.temp} °C</p>
-            <p>Humidity: {current.main.humidity} °C</p>
+            <p>Humidity: {current.main.humidity} </p>
             <p>Wind: {current.wind.speed} m/s</p>
             <p>Sunrise: {new Date(current.sys.sunrise * 1000).toLocaleTimeString()}</p>
             <p>Sunset: {new Date(current.sys.sunset * 1000).toLocaleTimeString()}</p>
